@@ -41,12 +41,22 @@ parking_brand_df = (
 parking_brand_df['Pct POI With Parking'] = parking_brand_df['Pct POI With Parking'].astype(float).apply(lambda x: "{:.01f}%".format(x))
 
 
-styled_brand_df = (
-    parking_brand_df.style.apply(lambda x: ['background-color: #D7E8ED' if i % 2 == 0 else '' for i in range(len(x))], axis=0)
-)
+distinct_brands = parking_brand_df['Brand Name'].unique().tolist()
+brands_list = st.selectbox("Brands:", [""] + distinct_brands)
 
 st.write("Parking Coverage by Brand")
-st.dataframe(styled_brand_df, use_container_width=True, hide_index=True)
+
+if brands_list:
+    styled_brand_df = (
+        parking_brand_df[parking_brand_df['Brand Name'] == brands_list].style.apply(
+            lambda x: ['background-color: #D7E8ED' if i % 2 == 0 else '' for i in range(len(x))], axis=0)
+    )
+    st.dataframe(styled_brand_df, use_container_width=True, hide_index=True)
+else:
+    styled_brand_df = (
+        parking_brand_df.style.apply(lambda x: ['background-color: #D7E8ED' if i % 2 == 0 else '' for i in range(len(x))], axis=0)
+    )
+    st.dataframe(styled_brand_df, use_container_width=True, hide_index=True)
 
 
 hide_streamlit_style = """
